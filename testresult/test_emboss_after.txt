@@ -1,0 +1,77 @@
+########################################
+# Program: needle
+# Rundate: Tue 23 May 2017 12:05:57
+# Commandline: needle
+#    -asequence /home/baelab/Desktop/Be_Analyzer/wt_seq_emboss.txt
+#    -bsequence /home/baelab/Desktop/Be_Analyzer/emboss_before.txt
+#    -gapopen 10
+#    -gapextend 0.5
+#    -outfile /home/baelab/Desktop/Be_Analyzer/emboss_after.txt
+# Align_format: srspair
+# Report_file: /home/baelab/Desktop/Be_Analyzer/emboss_after.txt
+########################################
+
+#=======================================
+#
+# Aligned_sequences: 2
+# 1: EMBOSS_001
+# 2: EMBOSS_002
+# Matrix: EDNAFULL
+# Gap_penalty: 10.0
+# Extend_penalty: 0.5
+#
+# Length: 140
+# Identity:     139/140 (99.3%)
+# Similarity:   139/140 (99.3%)
+# Gaps:           0/140 ( 0.0%)
+# Score: 691.0
+# 
+#
+#=======================================
+
+EMBOSS_001         1 ACTGTTTTCTCTGTCTGTGCAGGTCCACAGTATGGCATTGCCCGTGAAGA     50
+                     ||||||||||||||||||||||||||||||||||||||||||||||||||
+EMBOSS_002         1 ACTGTTTTCTCTGTCTGTGCAGGTCCACAGTATGGCATTGCCCGTGAAGA     50
+
+EMBOSS_001        51 TGTGGTCCTGAATCGTATTCTTGGGGAAGGCTTTTTTGGGGAGGTCTATG    100
+                     |||||||||||||||||||.||||||||||||||||||||||||||||||
+EMBOSS_002        51 TGTGGTCCTGAATCGTATTTTTGGGGAAGGCTTTTTTGGGGAGGTCTATG    100
+
+EMBOSS_001       101 AAGGTGTCTACACAAATCATGTGAGTTCTAGGATCTTCCC    140
+                     ||||||||||||||||||||||||||||||||||||||||
+EMBOSS_002       101 AAGGTGTCTACACAAATCATGTGAGTTCTAGGATCTTCCC    140
+
+
+#=======================================
+#
+# Aligned_sequences: 2
+# 1: EMBOSS_001
+# 2: EMBOSS_003
+# Matrix: EDNAFULL
+# Gap_penalty: 10.0
+# Extend_penalty: 0.5
+#
+# Length: 140
+# Identity:     140/140 (100.0%)
+# Similarity:   140/140 (100.0%)
+# Gaps:           0/140 ( 0.0%)
+# Score: 700.0
+# 
+#
+#=======================================
+
+EMBOSS_001         1 ACTGTTTTCTCTGTCTGTGCAGGTCCACAGTATGGCATTGCCCGTGAAGA     50
+                     ||||||||||||||||||||||||||||||||||||||||||||||||||
+EMBOSS_003         1 ACTGTTTTCTCTGTCTGTGCAGGTCCACAGTATGGCATTGCCCGTGAAGA     50
+
+EMBOSS_001        51 TGTGGTCCTGAATCGTATTCTTGGGGAAGGCTTTTTTGGGGAGGTCTATG    100
+                     ||||||||||||||||||||||||||||||||||||||||||||||||||
+EMBOSS_003        51 TGTGGTCCTGAATCGTATTCTTGGGGAAGGCTTTTTTGGGGAGGTCTATG    100
+
+EMBOSS_001       101 AAGGTGTCTACACAAATCATGTGAGTTCTAGGATCTTCCC    140
+                     ||||||||||||||||||||||||||||||||||||||||
+EMBOSS_003       101 AAGGTGTCTACACAAATCATGTGAGTTCTAGGATCTTCCC    140
+
+
+#---------------------------------------
+#---------------------------------------
