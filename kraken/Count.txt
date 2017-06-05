@@ -1,0 +1,8 @@
+all count	35912
+primer count	29858
+filted count	26727
+WT	9
+Total Substituions	7635
+C to D Substitutions	11056
+Insertions	717
+Deletioins	18257
