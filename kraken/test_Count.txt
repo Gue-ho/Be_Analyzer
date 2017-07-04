@@ -1,8 +1,8 @@
 all count	22
 primer count	19
 filted count	18
-WT	4
-Total Substituions	4
-C to D Substitutions	4
+WT	0
+Total Substituions	8
+C to D Substitutions	12
 Insertions	2
 Deletioins	4
