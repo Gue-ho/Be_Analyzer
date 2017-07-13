@@ -3,5 +3,9 @@ project(be_analyzer)
 
 set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -std=c++11")
 
-set(SOURCE_FILES main.cpp)
+include_directories(
+        ${CMAKE_SOURCE_DIR}/fastq-join
+)
+
+set(SOURCE_FILES main_v2.cpp fastq-join/fastq-lib.cpp)
 add_executable(be_analyzer ${SOURCE_FILES})
