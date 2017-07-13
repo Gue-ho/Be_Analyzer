@@ -40,17 +40,19 @@ private:
 	emboss m_emboss_dict;
 };
 
-void rev_comp(string &a) {
+string rev_comp(string &a) {
 	// string a must be uppercase letters
+    string rtn(a);
 	int i;
-	for (i = 0; i<a.size(); i++) {
-		if (a[i] == 'A') a[i] = 'T';
-		else if (a[i] == 'T') a[i] = 'A';
-		else if (a[i] == 'G') a[i] = 'C';
-		else if (a[i] == 'C') a[i] = 'G';
+	for (i = 0; i<rtn.size(); i++) {
+		if (rtn[i] == 'A') rtn[i] = 'T';
+		else if (rtn[i] == 'T') rtn[i] = 'A';
+		else if (rtn[i] == 'G') rtn[i] = 'C';
+		else if (rtn[i] == 'C') rtn[i] = 'G';
 	}
 
-	reverse(a.begin(), a.end());
+	reverse(rtn.begin(), rtn.end());
+    return rtn;
 }
 
 void BeAnalyzer::BeAnalyzer() {

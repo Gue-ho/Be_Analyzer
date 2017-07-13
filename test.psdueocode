@@ -1,0 +1,54 @@
+R = 60
+cleavage_length = 16 # 16bp + cleavage + 4bp + NGG for Cas9
+grna_seq = "ATAGATAGATGTAGAGT" # 20bp for Cas9
+
+class BeAnalyzer:
+    dictionary<string, int(default 0)> m_seq_count
+    string m_wt_seq_sliced
+
+    BeAnalyzer(wt_seq):
+        grna_pos = find_string(wt_seq, grna_seq)
+        cleavage_position = grna_pos - cleavege_length
+
+        pri_for = wt_seq.substr(cleavage_position - R, 10)
+        pri_end = wt_seq.substr(cleavage_position + R - 10, 10)
+
+        m_wt_seq_sliced = wt_seq.substr(cleavage_position - R, 2*R)
+
+    method process(fastq_joined_file):
+        for seq in fastq_joined_file:
+            pos_for = find_string_allowing_1_mismatch(seq, pri_for)
+            pos_back = find_string_allowing_1_mismatch(seq, pri_back)
+
+            if pos_for > pos_back:
+                continue
+
+            seq_sliced = seq.substr(pos_for, (pos_back-pos_for) *2)
+            m_seq_count[seq_sliced] += 1
+
+        cnt_insertion = 0
+        cnt_deletion = 0
+        cnt_wt = 0
+    
+        aligned_results = []
+
+        for seq_sliced, cnt in m_seq_count.items():
+            aligned_results.append(emboss_needle(seq_sliced, m_wt_seq_sliced)) 
+            if emboss_wt.find('-')!=-1 and emboss_seq.find('-')!=-1:
+                cnt_others += m_seq_count[seq_sliced]
+            elif emboss_wt.find('-')!=-1:
+                cnt_ins += m_seq_count[seq_sliced]
+            elif emboss_seq.find('-')!=-1:
+                cnt_del += m_seq_count[seq_sliced]
+            else:
+                 if != sub_seq:
+                   cnt_sub += m_seq_count[seq_sliced]
+                   for i in range(len(seq_sliced)):
+                        if seq_sliced[i] in ['a','t','g','c']:
+                            if seq_sliced[i] == 'c':
+                                c_to_d_sub += m_seq_count[seq_sliced]
+                            position[i] += read
+                            pattern[i][atgc.find] += read
+                 else:
+                   cnt_wt += read
+        plot(aligned_results, cnt_others, cnt_ins, cnt_del, cnt_sub, cnt_c_to_d_sub)
