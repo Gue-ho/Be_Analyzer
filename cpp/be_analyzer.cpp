@@ -228,45 +228,6 @@ void BeAnalyzer::data_analyze() {
 
     int i, j;
 
-    /*
-    struct line l;
-    meminit(l);
-
-    int c, w, space_pos;
-    string emboss_wt = "", emboss_seq = "", emboss_sym = "", lstr;
-    FILE* fp = fopen("/home/parkj/experiments/Be_Analyzer/emboss_after.txt", "r");
-    while (true) {
-        read_line(fp, l);
-        if (l.n < 0) break;
-        lstr = string(l.s);
-        if (lstr.substr(0, 10).compare("EMBOSS_001") == 0) {
-            c = 1;
-            emboss_wt += lstr.substr(21, 50);
-            w += 1;
-        }
-        if (w != 0) w++;
-        if (w == 3) emboss_sym += lstr.substr(21, 50);
-        if (w == 4) {
-            w = 0;
-            emboss_seq += lstr.substr(21, 50);
-        }
-        if (c == 1 && lstr[0] == '#') {
-            if ((space_pos = emboss_wt.find(" ")) > 0)
-                emboss_wt = emboss_wt.substr(0, space_pos);
-            if ((space_pos = emboss_seq.find(" ")) > 0)
-                emboss_seq = emboss_seq.substr(0, space_pos);
-            if ((space_pos = emboss_sym.find("\n")) > 0)
-                emboss_sym = emboss_sym.substr(0, space_pos);
-            m_emboss_wt_list.push_back(emboss_wt);
-            m_emboss_seq_list.push_back(emboss_seq);
-            m_emboss_sym_list.push_back(emboss_sym);
-            emboss_wt = ""; emboss_seq = ""; emboss_sym = "";
-            c = 0;
-        }
-    }
-    fclose(fp);
-    */
-
     bool has_c_to_d;
     for (vector<string>::iterator it=m_sorted_list.begin(); it!=m_sorted_list.end(); ++it) {
         int this_cnt = m_seq_count[*it];
@@ -312,8 +273,6 @@ void BeAnalyzer::data_analyze() {
 
 void BeAnalyzer::write_align() {
     int i;
-
-    //FILE* fp = fopen("/home/parkj/experiments/Be_Analyzer/align_result.txt", "w");
     FILE* fp = stdout;
     vector<string> types = {"WT", "Ins", "Del", "Sub", "Other"};
 

@@ -53,8 +53,6 @@ public:
     void write_align();
     void write_count();
     void write_substitution();
-
-private:
     void update_seq(string);
 
     int m_cleavage_position;
