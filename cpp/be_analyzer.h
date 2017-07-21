@@ -30,13 +30,13 @@ struct sub_t {
         if (sub == 'A') return cnt_A;
         else if (sub == 'T') return cnt_T;
         else if (sub == 'G') return cnt_G;
-        else if (sub == 'C') return cnt_C;
+        else return cnt_C;
     }
     const int& operator[](char sub) const {
         if (sub == 'A') return cnt_A;
         else if (sub == 'T') return cnt_T;
         else if (sub == 'G') return cnt_G;
-        else if (sub == 'C') return cnt_C;
+        else return cnt_C;
     }
 };
 

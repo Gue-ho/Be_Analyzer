@@ -1,7 +1,9 @@
 #include <zlib.h>
+#include <sys/stat.h>
 
 #include "be_analyzer.h"
 #include "be_fastq-lib.h"
+#include "emscripten_progress.h"
 
 #define VERSION "1.3"
 #define SVNREV 1
@@ -27,6 +29,8 @@ int BeAnalyzer::be_fastq_join(const char* fastq_file1, const char* fastq_file2) 
 
     in[0] = (char *)fastq_file1;
     in[1] = (char *)fastq_file2;
+
+    report_progress(0, 100, 0, 100, "Loading files...");
 
     gzFile fin[2];
     for (i = 0; i < in_n; ++i) {
@@ -63,8 +67,18 @@ int BeAnalyzer::be_fastq_join(const char* fastq_file1, const char* fastq_file2) 
     struct fq rc;
     meminit(rc);
 
+    struct stat st;
+    stat(in[0], &st);
+    double total_size = (double)st.st_size;
+    //double prev_pos = -1;
+
     // read in 1 record from each file
-    while (read_ok=read_fq(fin[0], nrec, &fq[0])) {
+    while ((read_ok=read_fq(fin[0], nrec, &fq[0]))) {
+        double current_pos = (double)gzoffset(fin[0]);
+        if (nrec % 1000 == 0) {
+            report_progress(current_pos, total_size, 0, 30, "Running fastq-join...");
+            //prev_pos = current_pos;
+        }
         for (i=1;i<in_n;++i) {
             int mate_ok=read_fq(fin[i], nrec, &fq[i]);
             if (read_ok != mate_ok) {
@@ -128,13 +142,13 @@ int BeAnalyzer::be_fastq_join(const char* fastq_file1, const char* fastq_file2) 
         }
     }
 
-
+    /*
     double dev = sqrt((((double)joincnt)*tlensq-pow((double)tlen,2)) / ((double)joincnt*((double)joincnt-1)) );
     printf("Total reads: %d\n", nrec);
     printf("Total joined: %d\n", joincnt);
     printf("Average join len: %.2f\n", (double) tlen / (double) joincnt);
     printf("Stdev join len: %.2f\n", dev);
     printf("Version: %s.%d\n", VERSION, SVNREV);
-
+    */
     return 0;
 }

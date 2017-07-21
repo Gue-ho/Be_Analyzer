@@ -15,7 +15,7 @@
 #include "be_fastq-lib.h"
 #include "be_fastq-join.h"
 #include "be_analyzer.h"
-#include "emscripten.h"
+#include "emscripten_progress.h"
 
 using namespace std;
 
@@ -27,7 +27,7 @@ struct less_second {
 };
 
 vector<string> sorted_filtered_map(seq_count m_out_seq, int crit, int *filtered_cnt) {
-    vector<pair<string, int> > cp;//(m_out_seq.begin(), m_out_seq.end());
+    vector<pair<string, int> > cp;
 
     *filtered_cnt = 0;
     for (seq_count::iterator iter=m_out_seq.begin(); iter != m_out_seq.end(); iter++) {
@@ -118,9 +118,6 @@ void BeAnalyzer::update_seq(string strseq) {
     int pos_for, pos_back, i = 0;
     string seq_sliced;
 
-    //string strseq, seq_sliced;
-    //strseq = string(entry.seq.s);
-
     m_cnt_all++;
     pos_for = find_pri(strseq, m_pri_for);
     pos_back = find_pri(strseq, m_pri_back);
@@ -166,22 +163,6 @@ void BeAnalyzer::read_fastq_files(const char* fastq_joined_file) {
     }
     fclose(fp);
 }
-/*
-void BeAnalyzer::write_emboss() {
-    FILE* fp = fopen("/home/parkj/experiments/Be_Analyzer/emboss_wt.txt", "w");
-    fprintf(fp, ">\n%s\n", m_wt_seq_sliced.c_str());
-    fclose(fp);
-
-    fp = fopen("/home/parkj/experiments/Be_Analyzer/emboss_before.txt", "w");
-    for (int i=0; i<m_sorted_list.size(); i++) {
-        fprintf(fp, ">\n%s\n", m_sorted_list[i].c_str());
-    }
-    fclose(fp);
-
-    system("needle /home/parkj/experiments/Be_Analyzer/emboss_wt.txt /home/parkj/experiments/Be_Analyzer/emboss_before.txt -gapopen 10 -gapextend 0.5 -outfile /home/parkj/experiments/Be_Analyzer/emboss_after.txt");
-    return;
-}
-*/
 
 void needle(string wt_seq, string sliced_seq, const int gapopen, const float gapextend, const int endgapopen, const float endgapextend, char *wt_str_char, char *seq_str_char, char *sym_str_char) {
     EM_ASM_({
@@ -204,7 +185,14 @@ void BeAnalyzer::run_alignment() {
 
     m_sorted_list = sorted_filtered_map(m_seq_count, 1, &m_cnt_filt); //sort
 
+    int prev_prog = 0;
     for (int i=0; i<m_sorted_list.size(); i++) {
+        int new_prog = int((i/(float)m_sorted_list.size())*30);
+        if (prev_prog < new_prog) {
+            report_progress(i, m_sorted_list.size(), 30, 30, "Aligning reads...");
+            prev_prog = new_prog;
+        }
+
         needle(m_wt_seq_sliced, m_sorted_list[i], gapopen, gapextend, endgapopen, endgapextend, wt_str_char, seq_str_char, sym_str_char);
 
         m_emboss_wt_list.push_back(string(wt_str_char));
@@ -226,10 +214,15 @@ void BeAnalyzer::data_analyze() {
     m_cnt_c_to_d = 0;
 
 
-    int i, j;
+    int i = 0, j = 0, prev_prog = 0;
 
     bool has_c_to_d;
     for (vector<string>::iterator it=m_sorted_list.begin(); it!=m_sorted_list.end(); ++it) {
+        int new_prog = int((i/(float)m_sorted_list.size())*30);
+        if (prev_prog < new_prog) {
+            report_progress(i, m_sorted_list.size(), 60, 30, "Analyzing results...");
+            prev_prog = new_prog;
+        }
         int this_cnt = m_seq_count[*it];
         if (m_emboss_wt_list[i].find('-') != string::npos && m_emboss_seq_list[i].find('-') != string::npos) {
             m_cnt_others += this_cnt;

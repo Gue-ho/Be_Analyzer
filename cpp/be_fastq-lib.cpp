@@ -22,12 +22,6 @@ THE SOFTWARE.
 
 #include "be_fastq-lib.h"
 
-#ifdef __MAIN__
-int main(int argc, char **argv) {
-	// todo... put testing stuff in here, so the lib can be tested independently of the other componenets
-}
-#endif
-
 int read_line(gzFile in, struct line &l) {
         l.n = gzgetline(&l.s, &l.a, in);
         // win32 support
@@ -355,7 +349,7 @@ int getstr (char ** lineptr, size_t *n, gzFile stream, char terminator, int offs
 
   for (;;)
     {
-      register int c = gzgetc (stream);
+      int c = gzgetc (stream);
 
       /* We always want at least one char left in the buffer, since we
 	 always (unless we get an error while reading the first char)
