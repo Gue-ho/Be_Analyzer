@@ -22,6 +22,21 @@ extern "C" {
                 rtnval['align'].push([Pointer_stringify($0), Pointer_stringify($1), Pointer_stringify($2), Pointer_stringify($3), $4]);
             }, ba.m_emboss_wt_list[i].c_str(), ba.m_emboss_sym_list[i].c_str(), ba.m_emboss_seq_list[i].c_str(), types[ba.m_type[i]].c_str(), ba.m_seq_count[ba.m_sorted_list[i]]);
         }
+        EM_ASM_({rtnval['count'].push($0,$1,$2,$3,$4,$5,$6,$7,$8);},ba.m_cnt_all,ba.m_cnt_pri,ba.m_cnt_filt, ba.m_cnt_wt, ba.m_cnt_sub, ba.m_cnt_c_to_d, ba.m_cnt_insertion, ba.m_cnt_deletion, ba.m_cnt_others);
+        EM_ASM_({rtnval['seq_info'].push(Pointer_stringify($0),Pointer_stringify($1),$2);},ba.m_wt_seq_sliced.c_str(),ba.m_grna_seq.c_str(), ba.m_R);
+        EM_ASM({rtnval['sub'] = [[], [], [], []];});
+        for (i = 0; i < ba.m_R*2; i++) {
+            EM_ASM_({rtnval['sub'][0].push($0);},ba.m_pattern[i]['A']);
+        }
+        for (i = 0; i < ba.m_R*2; i++) {
+            EM_ASM_({rtnval['sub'][1].push($0);},ba.m_pattern[i]['T']);
+        }
+        for (i = 0; i < ba.m_R*2; i++) {
+            EM_ASM_({rtnval['sub'][2].push($0);},ba.m_pattern[i]['G']);
+        }
+        for (i = 0; i < ba.m_R*2; i++) {
+            EM_ASM_({rtnval['sub'][3].push($0);},ba.m_pattern[i]['C']);
+        }
         //report_progress(100, 100, 0, 100, "Done!");
     }
 

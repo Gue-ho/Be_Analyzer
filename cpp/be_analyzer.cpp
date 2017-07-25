@@ -67,9 +67,13 @@ BeAnalyzer::BeAnalyzer(const int R, const int filted_n, const int cleavage_lengt
 
     if ((grna_pos = wt_seq.find(grna_seq)) != string::npos) {
         cleavage_position = grna_pos + cleavage_length;
+        m_dir = 0;
     }
     else if ((grna_pos = wt_seq.find(rev_comp(grna_seq))) != string::npos) {
         cleavage_position = grna_pos + grna_seq.size() - cleavage_length;
+        cleavage_position = wt_seq.size()-cleavage_position-1;
+        wt_seq = rev_comp(wt_seq);
+        grna_seq = rev_comp(grna_seq);
         m_dir = 1;
     }
 
@@ -87,7 +91,7 @@ BeAnalyzer::BeAnalyzer(const int R, const int filted_n, const int cleavage_lengt
     m_cnt_pri = 0; m_cnt_filt = 0; m_cnt_all=0;
     m_pri_len = pri_len;
     m_R = R;
-
+    m_grna_seq = grna_seq;
     return;
 }
 
@@ -117,6 +121,9 @@ int find_pri(string seq, string pri) {
 void BeAnalyzer::update_seq(string strseq) {
     int pos_for, pos_back, i = 0;
     string seq_sliced;
+
+    if (m_dir == 1)
+        strseq = rev_comp(strseq);
 
     m_cnt_all++;
     pos_for = find_pri(strseq, m_pri_for);

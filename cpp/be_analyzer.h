@@ -57,7 +57,7 @@ public:
 
     int m_cleavage_position;
     int m_dir, m_cnt_all, m_cnt_pri, m_cnt_filt, m_cnt_sub, m_cnt_c_to_d;
-    string m_wt_seq_sliced, m_pri_for, m_pri_back;
+    string m_wt_seq_sliced, m_pri_for, m_pri_back, m_grna_seq;
     int m_cnt_insertion, m_cnt_deletion, m_cnt_wt, m_cnt_others, m_R;
 
     vector<string> m_emboss_wt_list, m_emboss_seq_list, m_emboss_sym_list, m_sorted_list;
