@@ -12,6 +12,7 @@
 #include <iostream> //sort
 #include <set>
 #include <functional>
+#include <sys/stat.h>
 #include "be_fastq-lib.h"
 #include "be_fastq-join.h"
 #include "be_analyzer.h"
@@ -162,9 +163,15 @@ void BeAnalyzer::read_fastq_files(const char* fastq_joined_file) {
     fp = fopen(fastq_joined_file, "r");
     if (fp == NULL) {
         printf("can't find fastq file");
-    }
-    else {
+    } else {
+        struct stat st;
+        stat(fastq_joined_file, &st);
+        double total_size = (double)st.st_size; 
         while (read_fq(fp, linecnt++, &entry)) {
+            if (linecnt % 1000 == 0) {
+                double current_pos = ftell(fp);
+                report_progress(current_pos, total_size, 0, 30, "Loading file...");
+            }
             update_seq(string(entry.seq.s));
         }
     }
