@@ -19,8 +19,8 @@ extern "C" {
                 prev_prog = new_prog;
             }
             EM_ASM_({
-                rtnval['align'].push([Pointer_stringify($0), Pointer_stringify($1), Pointer_stringify($2), Pointer_stringify($3), $4]);
-            }, ba.m_emboss_wt_list[i].c_str(), ba.m_emboss_sym_list[i].c_str(), ba.m_emboss_seq_list[i].c_str(), types[ba.m_type[i]].c_str(), ba.m_seq_count[ba.m_sorted_list[i]]);
+                rtnval['align'].push([Pointer_stringify($0), Pointer_stringify($1), Pointer_stringify($2), Pointer_stringify($3), $4, $5]);
+            }, ba.m_emboss_wt_list[i].c_str(), ba.m_emboss_sym_list[i].c_str(), ba.m_emboss_seq_list[i].c_str(), types[ba.m_type[i]].c_str(), ba.m_seq_count[ba.m_sorted_list[i]], ba.m_length[i]);
         }
         EM_ASM_({rtnval['count'].push($0,$1,$2,$3,$4,$5,$6,$7,$8);},ba.m_cnt_all,ba.m_cnt_pri,ba.m_cnt_filt, ba.m_cnt_wt, ba.m_cnt_sub, ba.m_cnt_c_to_d, ba.m_cnt_insertion, ba.m_cnt_deletion, ba.m_cnt_others);
         EM_ASM_({rtnval['seq_info'].push(Pointer_stringify($0),Pointer_stringify($1),$2);},ba.m_wt_seq_sliced.c_str(),ba.m_grna_seq.c_str(), ba.m_R);

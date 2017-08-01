@@ -64,24 +64,41 @@ string rev_comp(string &a) {
 }
 
 BeAnalyzer::BeAnalyzer(const int R, const int filted_n, const int cleavage_length, const int pri_len, string grna_seq, string wt_seq) {
-    int grna_pos, cleavage_position; // m_dir sequence direction
+    int grna_pos, cleavage_position, start_pos, end_pos; // m_dir sequence direction
+    
+    m_grna_seq = grna_seq;
 
     if ((grna_pos = wt_seq.find(grna_seq)) != string::npos) {
-        cleavage_position = grna_pos + cleavage_length;
+        cleavage_position = grna_pos + cleavage_length - 2;
         m_dir = 0;
+        
+        start_pos = cleavage_position - R;
+        end_pos = start_pos + 2*R;
+
+        if (start_pos < 0) start_pos = 0;
+        if (end_pos > wt_seq.length()) end_pos = wt_seq.length() - 1;
     }
     else if ((grna_pos = wt_seq.find(rev_comp(grna_seq))) != string::npos) {
-        cleavage_position = grna_pos + grna_seq.size() - cleavage_length;
-        cleavage_position = wt_seq.size()-cleavage_position-1;
+        cleavage_position = grna_pos + grna_seq.length() - cleavage_length - 1;
+        cleavage_position = wt_seq.length() - cleavage_position - 1;
         wt_seq = rev_comp(wt_seq);
-        grna_seq = rev_comp(grna_seq);
         m_dir = 1;
+        
+        start_pos = cleavage_position - R;
+        end_pos = start_pos + 2*R;
+
+        if (start_pos < 0) start_pos = 0;
+        if (end_pos > wt_seq.length()) end_pos = wt_seq.length() - 1;
+    }
+    else {
+        start_pos = 0;
+        end_pos = wt_seq.length() - 1;
     }
 
-    m_pri_for = wt_seq.substr(cleavage_position - R, pri_len);
-    m_pri_back = wt_seq.substr(cleavage_position + R - pri_len, pri_len);
+    m_pri_for = wt_seq.substr(start_pos, pri_len);
+    m_pri_back = wt_seq.substr(end_pos - pri_len, pri_len);
 
-    m_wt_seq_sliced = wt_seq.substr(cleavage_position - R, 2 * R);
+    m_wt_seq_sliced = wt_seq.substr(start_pos, 2 * R);
 
     m_cleavage_position = R;
     if (cleavage_position < R) m_cleavage_position -= R-cleavage_position;
@@ -92,7 +109,6 @@ BeAnalyzer::BeAnalyzer(const int R, const int filted_n, const int cleavage_lengt
     m_cnt_pri = 0; m_cnt_filt = 0; m_cnt_all=0;
     m_pri_len = pri_len;
     m_R = R;
-    m_grna_seq = grna_seq;
     return;
 }
 
@@ -238,6 +254,11 @@ void BeAnalyzer::data_analyze() {
             prev_prog = new_prog;
         }
         int this_cnt = m_seq_count[*it];
+        int l_c = 0;
+        for (j = 0; j < m_emboss_seq_list[i].length(); j++) {
+            if (m_emboss_seq_list[i].substr(j, 1) == "-") l_c++;
+        }
+        m_length.push_back(m_emboss_seq_list[i].length() - l_c);
         if (m_emboss_wt_list[i].find('-') != string::npos && m_emboss_seq_list[i].find('-') != string::npos) {
             m_cnt_others += this_cnt;
             m_type.push_back(Other);

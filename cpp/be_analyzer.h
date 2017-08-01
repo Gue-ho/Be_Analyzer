@@ -70,7 +70,7 @@ public:
 
     int m_pri_len;
 
-    vector<int> m_type;
+    vector<int> m_type, m_length;
 };
 
 #endif //BE_ANALYZER_BE_ANALYZER_H
