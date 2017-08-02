@@ -1,5 +1,0 @@
-export PATH="/home/leo/Downloads/emsdk-portable:/home/leo/Downloads/emsdk-portable/clang/e1.37.16_64bit:/home/leo/Downloads/emsdk-portable/node/4.1.1_64bit/bin:/home/leo/Downloads/emsdk-portable/emscripten/1.37.16:/home/leo/bin:/home/leo/.local/bin:/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin:/usr/games:/usr/local/games:/snap/bin"
-export EMSDK="/home/leo/Downloads/emsdk-portable"
-export EM_CONFIG="/home/leo/.emscripten"
-export BINARYEN_ROOT="/home/leo/Downloads/emsdk-portable/clang/e1.37.16_64bit/binaryen"
-export EMSCRIPTEN="/home/leo/Downloads/emsdk-portable/emscripten/1.37.16"
