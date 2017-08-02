@@ -63,13 +63,13 @@ string rev_comp(string &a) {
     return a;
 }
 
-BeAnalyzer::BeAnalyzer(const int R, const int filted_n, const int cleavage_length, const int pri_len, string grna_seq, string wt_seq) {
+BeAnalyzer::BeAnalyzer(const int addval, const int R, const int filted_n, const int cleavage_length, const int pri_len, string grna_seq, string wt_seq) {
     int grna_pos, cleavage_position, start_pos, end_pos; // m_dir sequence direction
-    
+    m_addval = addval;
     m_grna_seq = grna_seq;
 
     if ((grna_pos = wt_seq.find(grna_seq)) != string::npos) {
-        cleavage_position = grna_pos + cleavage_length - 2;
+        cleavage_position = grna_pos + int(grna_seq.length()/2) - 1;
         m_dir = 0;
         
         start_pos = cleavage_position - R;
@@ -79,7 +79,7 @@ BeAnalyzer::BeAnalyzer(const int R, const int filted_n, const int cleavage_lengt
         if (end_pos > wt_seq.length()) end_pos = wt_seq.length() - 1;
     }
     else if ((grna_pos = wt_seq.find(rev_comp(grna_seq))) != string::npos) {
-        cleavage_position = grna_pos + grna_seq.length() - cleavage_length - 1;
+        cleavage_position = grna_pos + int(grna_seq.length()/2) - 1;
         cleavage_position = wt_seq.length() - cleavage_position - 1;
         wt_seq = rev_comp(wt_seq);
         m_dir = 1;
@@ -95,16 +95,18 @@ BeAnalyzer::BeAnalyzer(const int R, const int filted_n, const int cleavage_lengt
         end_pos = wt_seq.length() - 1;
     }
 
-    m_pri_for = wt_seq.substr(start_pos, pri_len);
-    m_pri_back = wt_seq.substr(end_pos - pri_len, pri_len);
+    m_pri_for = wt_seq.substr(0, 10);
+    m_pri_back = wt_seq.substr(wt_seq.length()-10, 10);
 
-    m_wt_seq_sliced = wt_seq.substr(start_pos, 2 * R);
+    m_wt_seq_sliced = wt_seq;
+    m_add_start = wt_seq.find(grna_seq) - m_addval;
+    m_add_start = 124;
 
     m_cleavage_position = R;
     if (cleavage_position < R) m_cleavage_position -= R-cleavage_position;
 
-    m_pattern = new sub_t[R * 2];
-    m_cnt_position = new int[R * 2];
+    m_pattern = new sub_t[addval*2 + grna_seq.length()];
+    m_cnt_position = new int[addval*2 + grna_seq.length()];
 
     m_cnt_pri = 0; m_cnt_filt = 0; m_cnt_all=0;
     m_pri_len = pri_len;
@@ -234,7 +236,7 @@ void BeAnalyzer::run_alignment() {
     delete [] seq_str_char;
     delete [] sym_str_char;
 }
-
+    
 void BeAnalyzer::data_analyze() {
     m_cnt_insertion = 0;
     m_cnt_deletion = 0;
@@ -242,9 +244,8 @@ void BeAnalyzer::data_analyze() {
     m_cnt_sub = 0;
     m_cnt_others = 0;
     m_cnt_c_to_d = 0;
-
-
-    int i = 0, j = 0, prev_prog = 0;
+   
+    int i = 0, j = 0, k = 0, prev_prog = 0;
 
     bool has_c_to_d;
     for (vector<string>::iterator it=m_sorted_list.begin(); it!=m_sorted_list.end(); ++it) {
@@ -259,15 +260,15 @@ void BeAnalyzer::data_analyze() {
             if (m_emboss_seq_list[i].substr(j, 1) == "-") l_c++;
         }
         m_length.push_back(m_emboss_seq_list[i].length() - l_c);
-        if (m_emboss_wt_list[i].find('-') != string::npos && m_emboss_seq_list[i].find('-') != string::npos) {
-            m_cnt_others += this_cnt;
-            m_type.push_back(Other);
-        }
-        else if (m_emboss_wt_list[i].find('-') != string::npos) {
+        
+        int wt_bar = count(m_emboss_wt_list[i].begin(), m_emboss_wt_list[i].end(), '-');
+        int seq_bar = count(m_emboss_seq_list[i].begin(), m_emboss_seq_list[i].end(), '-');
+        
+        if (wt_bar > seq_bar) {
             m_cnt_insertion += this_cnt;
             m_type.push_back(Ins);
         }
-        else if (m_emboss_seq_list[i].find('-') != string::npos) {
+        else if (seq_bar != 0 && wt_bar <= seq_bar) {
             m_cnt_deletion += this_cnt;
             m_type.push_back(Del);
         }
@@ -276,11 +277,22 @@ void BeAnalyzer::data_analyze() {
                 m_cnt_sub += this_cnt;
                 m_type.push_back(Sub);
                 has_c_to_d = false;
-                for (j = 0; j < m_R * 2; j++) {
+                for (j = m_add_start; j < m_add_start + m_addval*2 + m_grna_seq.length(); j++) {
                     if (m_emboss_sym_list[i].substr(j, 1) == ".") {
                         if (m_emboss_wt_list[i].substr(j, 1) == "C") {
                             if (!has_c_to_d) {
                                 m_cnt_c_to_d += this_cnt;
+                                if (m_add_seq_count.find(m_emboss_seq_list[i].substr(m_add_start,m_addval*2 + m_grna_seq.length())) == m_add_seq_count.end()) {
+                                    m_add_seq_count[m_emboss_seq_list[i].substr(m_add_start,m_addval*2 + m_grna_seq.length())] = 1;
+                                    m_add_sort[m_emboss_seq_list[i].substr(m_add_start, m_addval*2 + m_grna_seq.length())] = k;
+                                    k++;
+                                    m_add_type.push_back("C to D");
+                                    m_add_emboss_wt_list.push_back(m_emboss_wt_list[i].substr(m_add_start, m_addval*2 + m_grna_seq.length()));
+                                    m_add_emboss_seq_list.push_back(m_emboss_seq_list[i].substr(m_add_start, m_addval*2 + m_grna_seq.length()));
+                                    m_add_emboss_sym_list.push_back(m_emboss_sym_list[i].substr(m_add_start, m_addval*2 + m_grna_seq.length()));
+                                } else {
+                                    m_add_seq_count[m_emboss_seq_list[i].substr(m_add_start,m_addval*2 + m_grna_seq.length())]++;
+                                }           
                                 has_c_to_d = true;
                             }
                         }
@@ -296,13 +308,14 @@ void BeAnalyzer::data_analyze() {
         }
         i++;
     }
+    m_add_sorted_list = sorted_filtered_map(m_add_seq_count, 1, &k);
     return;
 }
 
 void BeAnalyzer::write_align() {
     int i;
     FILE* fp = stdout;
-    vector<string> types = {"WT", "Ins", "Del", "Sub", "Other"};
+    vector<string> types = {"WT", "Ins", "Del", "Sub", "Other", "CtoD"};
 
     for (i = 0; i < m_sorted_list.size(); i++) {
         fprintf(fp, "%s\t%s\t%d\n%s\n%s\n\n", m_emboss_wt_list[i].c_str(), types[m_type[i]].c_str(), m_seq_count[m_sorted_list[i]], m_emboss_sym_list[i].c_str(), m_emboss_seq_list[i].c_str());
@@ -320,7 +333,7 @@ void BeAnalyzer::write_count() {
     return;
 }
 
-void BeAnalyzer::write_substitution() {
+/*void BeAnalyzer::write_substitution() {
 
     int i = 0, c = 0;
 
@@ -341,4 +354,4 @@ void BeAnalyzer::write_substitution() {
     }
     fclose(fp);
     return;
-}
+}*/

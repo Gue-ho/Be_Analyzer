@@ -43,7 +43,7 @@ struct sub_t {
 class BeAnalyzer {
 public:
     ~BeAnalyzer();
-    BeAnalyzer(const int R, const int filted_n, const int cleavage_length, const int pri_len, string grna_seq, string wt_seq);
+    BeAnalyzer(const int addval, const int R, const int filted_n, const int cleavage_length, const int pri_len, string grna_seq, string wt_seq);
     void read_fastq_files(const char* fastq_file1, const char* fastq_file2);
     void read_fastq_files(const char* fastq_joined_file);
     int be_fastq_join(const char*, const char*);
@@ -52,17 +52,17 @@ public:
     void data_analyze();
     void write_align();
     void write_count();
-    void write_substitution();
+    //void write_substitution();
     void update_seq(string);
 
     int m_cleavage_position;
-    int m_dir, m_cnt_all, m_cnt_pri, m_cnt_filt, m_cnt_sub, m_cnt_c_to_d;
+    int m_dir, m_cnt_all, m_cnt_pri, m_cnt_filt, m_cnt_sub, m_cnt_c_to_d, m_add_start;
     string m_wt_seq_sliced, m_pri_for, m_pri_back, m_grna_seq;
-    int m_cnt_insertion, m_cnt_deletion, m_cnt_wt, m_cnt_others, m_R;
+    int m_cnt_insertion, m_cnt_deletion, m_cnt_wt, m_cnt_others, m_R, m_addval;
 
-    vector<string> m_emboss_wt_list, m_emboss_seq_list, m_emboss_sym_list, m_sorted_list;
+    vector<string> m_emboss_wt_list, m_emboss_seq_list, m_emboss_sym_list, m_sorted_list, m_add_emboss_wt_list, m_add_emboss_seq_list, m_add_emboss_sym_list, m_add_sorted_list, m_add_type;
 
-    seq_count m_seq_count;
+    seq_count m_seq_count, m_add_seq_count, m_add_sort;
     sub_t* m_pattern;
 
     int *m_cnt_position;
