@@ -161,6 +161,7 @@ void BeAnalyzer::read_fastq_files(const char* fastq_joined_file) {
 
     FILE* fp;
     fp = fopen(fastq_joined_file, "r");
+    setvbuf(fp, NULL, _IOFBF, 4194304);
     if (fp == NULL) {
         printf("can't find fastq file");
     } else {

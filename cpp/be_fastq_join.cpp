@@ -34,7 +34,9 @@ int BeAnalyzer::be_fastq_join(const char* fastq_file1, const char* fastq_file2) 
 
     gzFile fin[2];
     for (i = 0; i < in_n; ++i) {
-        fin[i] = gzopen(in[i], "r");
+        FILE* fp = fopen(in[i], "r");
+        setvbuf(fp, NULL, _IOFBF, 4194304);
+        fin[i] = gzdopen(fileno(fp), "r");
         if (!fin[i]) {
             fprintf(stderr, "Error opening file '%s': %s\n",in[i], strerror(errno));
             return 1;
