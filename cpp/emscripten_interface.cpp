@@ -23,24 +23,24 @@ extern "C" {
             }, ba.m_emboss_wt_list[i].c_str(), ba.m_emboss_sym_list[i].c_str(), ba.m_emboss_seq_list[i].c_str(), types[ba.m_type[i]].c_str(), ba.m_seq_count[ba.m_sorted_list[i]], ba.m_length[i]);
         }
         EM_ASM_({rtnval['count'].push($0,$1,$2,$3,$4,$5,$6,$7,$8);},ba.m_cnt_all,ba.m_cnt_pri,ba.m_cnt_filt, ba.m_cnt_wt, ba.m_cnt_sub, ba.m_cnt_c_to_d, ba.m_cnt_insertion, ba.m_cnt_deletion, ba.m_cnt_others);
-        EM_ASM_({rtnval['seq_info'].push(Pointer_stringify($0),Pointer_stringify($1),$2,$3);},ba.m_wt_seq_sliced.c_str(),ba.m_grna_seq.c_str(), ba.m_R, ba.m_add_start);
+        EM_ASM_({rtnval['seq_info'].push(Pointer_stringify($0),Pointer_stringify($1),$2,$3,$4);},ba.m_wt_seq_sliced.c_str(),ba.m_grna_seq.c_str(), ba.m_R, ba.m_add_start, ba.m_addval);
         EM_ASM({rtnval['sub'] = [[], [], [], []];});
-        for (i = 0; i < ba.m_R*2; i++) {
+        for (i = ba.m_add_start; i < ba.m_add_end ; i++) {
             EM_ASM_({rtnval['sub'][0].push($0);},ba.m_pattern[i]['A']);
         }
-        for (i = 0; i < ba.m_R*2; i++) {
+        for (i = ba.m_add_start; i < ba.m_add_end ; i++) {
             EM_ASM_({rtnval['sub'][1].push($0);},ba.m_pattern[i]['T']);
         }
-        for (i = 0; i < ba.m_R*2; i++) {
+        for (i = ba.m_add_start; i < ba.m_add_end; i++) {
             EM_ASM_({rtnval['sub'][2].push($0);},ba.m_pattern[i]['G']);
         }
-        for (i = 0; i < ba.m_R*2; i++) {
+        for (i = ba.m_add_start; i < ba.m_add_end ; i++) {
             EM_ASM_({rtnval['sub'][3].push($0);},ba.m_pattern[i]['C']);
         }
         for (i = 0; i < ba.m_add_sorted_list.size(); i++) {
             j = ba.m_add_sort[ba.m_add_sorted_list[i]];
             EM_ASM_({rtnval['window'].push([Pointer_stringify($0), Pointer_stringify($1), Pointer_stringify($2), Pointer_stringify($3), $4, $5]);
-            }, ba.m_add_emboss_wt_list[j].c_str(), ba.m_add_emboss_sym_list[j].c_str(), ba.m_add_emboss_seq_list[j].c_str(), "C to D", ba.m_add_seq_count[ba.m_sorted_list[i]], ba.m_addval*2+ba.m_grna_seq.length());
+            }, ba.m_add_emboss_wt_list[j].c_str(), ba.m_add_emboss_sym_list[j].c_str(), ba.m_add_emboss_seq_list[j].c_str(), ba.m_add_type[j].c_str(), ba.m_add_seq_count[ba.m_sorted_list[i]], ba.m_add_length);
         }
         //report_progress(100, 100, 0, 100, "Done!");
     }

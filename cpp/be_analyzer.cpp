@@ -95,21 +95,25 @@ BeAnalyzer::BeAnalyzer(const int addval, const int R, const int filted_n, const 
         end_pos = wt_seq.length() - 1;
     }
 
-    m_pri_for = wt_seq.substr(0, 10);
-    m_pri_back = wt_seq.substr(wt_seq.length()-10, 10);
+    m_pri_for = wt_seq.substr(0, 15);
+    m_pri_back = wt_seq.substr(wt_seq.length()-15, 15);
 
     m_wt_seq_sliced = wt_seq;
-    m_add_start = wt_seq.find(grna_seq) - m_addval;
-    m_add_start = 124;
+    m_add_start = wt_seq.find(m_grna_seq) - m_addval;
+    
+    m_add_end = m_add_start + m_addval*2 + grna_seq.length();
 
+    if (m_add_start < 0) m_add_start = 0;
+    if (m_add_end > wt_seq.length()) m_add_end = wt_seq.length()-1;
+    
     m_cleavage_position = R;
     if (cleavage_position < R) m_cleavage_position -= R-cleavage_position;
 
-    m_pattern = new sub_t[addval*2 + grna_seq.length()];
-    m_cnt_position = new int[addval*2 + grna_seq.length()];
+    m_pattern = new sub_t[m_wt_seq_sliced.length()];
+    m_cnt_position = new int[m_wt_seq_sliced.length()];
 
     m_cnt_pri = 0; m_cnt_filt = 0; m_cnt_all=0;
-    m_pri_len = pri_len;
+    m_pri_len = 15;
     m_R = R;
     return;
 }
@@ -277,21 +281,21 @@ void BeAnalyzer::data_analyze() {
                 m_cnt_sub += this_cnt;
                 m_type.push_back(Sub);
                 has_c_to_d = false;
-                for (j = m_add_start; j < m_add_start + m_addval*2 + m_grna_seq.length(); j++) {
+                for (j = 0; j < m_wt_seq_sliced.length(); j++) {
                     if (m_emboss_sym_list[i].substr(j, 1) == ".") {
-                        if (m_emboss_wt_list[i].substr(j, 1) == "C") {
+                        if (m_emboss_wt_list[i].substr(j, 1) == "C" && m_add_start < j && j < m_add_end) {
                             if (!has_c_to_d) {
                                 m_cnt_c_to_d += this_cnt;
-                                if (m_add_seq_count.find(m_emboss_seq_list[i].substr(m_add_start,m_addval*2 + m_grna_seq.length())) == m_add_seq_count.end()) {
-                                    m_add_seq_count[m_emboss_seq_list[i].substr(m_add_start,m_addval*2 + m_grna_seq.length())] = 1;
-                                    m_add_sort[m_emboss_seq_list[i].substr(m_add_start, m_addval*2 + m_grna_seq.length())] = k;
+                                if (m_add_seq_count.find(m_emboss_seq_list[i].substr(m_add_start,m_add_start - m_add_end + 1)) == m_add_seq_count.end()) {
+                                    m_add_seq_count[m_emboss_seq_list[i].substr(m_add_start,m_add_start - m_add_end + 1)] = this_cnt;
+                                    m_add_sort[m_emboss_seq_list[i].substr(m_add_start, m_add_start - m_add_end + 1)] = k;
                                     k++;
                                     m_add_type.push_back("C to D");
-                                    m_add_emboss_wt_list.push_back(m_emboss_wt_list[i].substr(m_add_start, m_addval*2 + m_grna_seq.length()));
-                                    m_add_emboss_seq_list.push_back(m_emboss_seq_list[i].substr(m_add_start, m_addval*2 + m_grna_seq.length()));
-                                    m_add_emboss_sym_list.push_back(m_emboss_sym_list[i].substr(m_add_start, m_addval*2 + m_grna_seq.length()));
+                                    m_add_emboss_wt_list.push_back(m_emboss_wt_list[i].substr(m_add_start, m_add_start - m_add_end + 1));
+                                    m_add_emboss_seq_list.push_back(m_emboss_seq_list[i].substr(m_add_start, m_add_start - m_add_end + 1));
+                                    m_add_emboss_sym_list.push_back(m_emboss_sym_list[i].substr(m_add_start, m_add_start - m_add_end + 1));
                                 } else {
-                                    m_add_seq_count[m_emboss_seq_list[i].substr(m_add_start,m_addval*2 + m_grna_seq.length())]++;
+                                    m_add_seq_count[m_emboss_seq_list[i].substr(m_add_start,m_add_start - m_add_end + 1)]+=this_cnt;
                                 }           
                                 has_c_to_d = true;
                             }
@@ -308,7 +312,8 @@ void BeAnalyzer::data_analyze() {
         }
         i++;
     }
-    m_add_sorted_list = sorted_filtered_map(m_add_seq_count, 1, &k);
+    m_add_sorted_list = sorted_filtered_map(m_add_seq_count, 1, &m_cnt_c_to_d);
+    m_add_length = m_addval*2 + m_grna_seq.length();
     return;
 }
 

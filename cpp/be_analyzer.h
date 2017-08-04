@@ -56,9 +56,9 @@ public:
     void update_seq(string);
 
     int m_cleavage_position;
-    int m_dir, m_cnt_all, m_cnt_pri, m_cnt_filt, m_cnt_sub, m_cnt_c_to_d, m_add_start;
+    int m_dir, m_cnt_all, m_cnt_pri, m_cnt_filt, m_cnt_sub, m_cnt_c_to_d, m_add_start, m_add_end;
     string m_wt_seq_sliced, m_pri_for, m_pri_back, m_grna_seq;
-    int m_cnt_insertion, m_cnt_deletion, m_cnt_wt, m_cnt_others, m_R, m_addval;
+    int m_cnt_insertion, m_cnt_deletion, m_cnt_wt, m_cnt_others, m_R, m_addval, m_add_length;
 
     vector<string> m_emboss_wt_list, m_emboss_seq_list, m_emboss_sym_list, m_sorted_list, m_add_emboss_wt_list, m_add_emboss_seq_list, m_add_emboss_sym_list, m_add_sorted_list, m_add_type;
 
