@@ -15,7 +15,7 @@ extern "C" {
         for (i = 0; i < ba.m_sorted_list.size(); i++) {
             int new_prog = int((i/(float)ba.m_sorted_list.size())*10);
             if (prev_prog < new_prog) {
-                report_progress(i, ba.m_sorted_list.size(), 90, 10, "Preparing results...");
+                report_progress(i, ba.m_sorted_list.size(), 95, 5, "Preparing results...");
                 prev_prog = new_prog;
             }
             EM_ASM_({
@@ -40,7 +40,7 @@ extern "C" {
         for (i = 0; i < ba.m_add_sorted_list.size(); i++) {
             j = ba.m_add_sort[ba.m_add_sorted_list[i]];
             EM_ASM_({rtnval['window'].push([Pointer_stringify($0), Pointer_stringify($1), Pointer_stringify($2), Pointer_stringify($3), $4, $5]);
-            }, ba.m_add_emboss_wt_list[j].c_str(), ba.m_add_emboss_sym_list[j].c_str(), ba.m_add_emboss_seq_list[j].c_str(), ba.m_add_type[j].c_str(), ba.m_add_seq_count[ba.m_sorted_list[i]], ba.m_add_length);
+            }, ba.m_add_emboss_wt_list[j].c_str(), ba.m_add_emboss_sym_list[j].c_str(), ba.m_add_emboss_seq_list[j].c_str(), ba.m_add_type[j].c_str(), ba.m_add_seq_count[ba.m_add_sorted_list[i]], ba.m_add_length);
         }
         //report_progress(100, 100, 0, 100, "Done!");
     }
