@@ -78,7 +78,7 @@ int BeAnalyzer::be_fastq_join(const char* fastq_file1, const char* fastq_file2) 
     while ((read_ok=read_fq(fin[0], nrec, &fq[0]))) {
         double current_pos = (double)gzoffset(fin[0]);
         if (nrec % 1000 == 0) {
-            report_progress(current_pos, total_size, 0, 30, "Running fastq-join...");
+            report_progress(current_pos, total_size, 0, 45, "Running fastq-join...");
             //prev_pos = current_pos;
         }
         for (i=1;i<in_n;++i) {
