@@ -101,7 +101,7 @@ BeAnalyzer::BeAnalyzer(const int addval, const int R, const int filted_n, const 
     m_wt_seq_sliced = wt_seq;
     m_add_start = wt_seq.find(m_grna_seq) - m_addval;
     
-    m_add_end = m_add_start + m_addval*2 + grna_seq.length();
+    m_add_end = m_add_start + m_addval*2 + m_grna_seq.length();
 
     if (m_add_start < 0) m_add_start = 0;
     if (m_add_end > wt_seq.length()) m_add_end = wt_seq.length()-1;
@@ -147,7 +147,7 @@ void BeAnalyzer::update_seq(string strseq) {
 
     if (m_dir == 1)
         strseq = rev_comp(strseq);
-
+    
     m_cnt_all++;
     pos_for = find_pri(strseq, m_pri_for);
     pos_back = find_pri(strseq, m_pri_back);
@@ -193,7 +193,7 @@ void BeAnalyzer::read_fastq_files(const char* fastq_joined_file) {
         while (read_fq(fp, linecnt++, &entry)) {
             if (linecnt % 1000 == 0) {
                 double current_pos = ftell(fp);
-                report_progress(current_pos, total_size, 0, 30, "Loading file...");
+                report_progress(current_pos, total_size, 0, 45, "Loading file...");
             }
             update_seq(string(entry.seq.s));
         }
@@ -226,7 +226,7 @@ void BeAnalyzer::run_alignment() {
     for (int i=0; i<m_sorted_list.size(); i++) {
         int new_prog = int((i/(float)m_sorted_list.size())*30);
         if (prev_prog < new_prog) {
-            report_progress(i, m_sorted_list.size(), 30, 30, "Aligning reads...");
+            report_progress(i, m_sorted_list.size(), 45, 45, "Aligning queries with reference sequence...");
             prev_prog = new_prog;
         }
 
@@ -256,7 +256,7 @@ void BeAnalyzer::data_analyze() {
     for (vector<string>::iterator it=m_sorted_list.begin(); it!=m_sorted_list.end(); ++it) {
         int new_prog = int((i/(float)m_sorted_list.size())*30);
         if (prev_prog < new_prog) {
-            report_progress(i, m_sorted_list.size(), 60, 30, "Analyzing results...");
+            report_progress(i, m_sorted_list.size(), 90, 5, "Analyzing results...");
             prev_prog = new_prog;
         }
         int this_cnt = m_seq_count[*it];
@@ -287,16 +287,16 @@ void BeAnalyzer::data_analyze() {
                         if (m_emboss_wt_list[i].substr(j, 1) == "C" && m_add_start < j && j < m_add_end) {
                             if (!has_c_to_d) {
                                 m_cnt_c_to_d += this_cnt;
-                                if (m_add_seq_count.find(m_emboss_seq_list[i].substr(m_add_start,m_add_start - m_add_end + 1)) == m_add_seq_count.end()) {
-                                    m_add_seq_count[m_emboss_seq_list[i].substr(m_add_start,m_add_start - m_add_end + 1)] = this_cnt;
-                                    m_add_sort[m_emboss_seq_list[i].substr(m_add_start, m_add_start - m_add_end + 1)] = k;
+                                if (m_add_seq_count.find(m_emboss_seq_list[i].substr(m_add_start,m_addval*2 + m_grna_seq.length())) == m_add_seq_count.end()) {
+                                    m_add_seq_count[m_emboss_seq_list[i].substr(m_add_start,m_addval*2 + m_grna_seq.length())] = this_cnt;
+                                    m_add_sort[m_emboss_seq_list[i].substr(m_add_start, m_addval*2 + m_grna_seq.length())] = k;
                                     k++;
                                     m_add_type.push_back("C to D");
-                                    m_add_emboss_wt_list.push_back(m_emboss_wt_list[i].substr(m_add_start, m_add_start - m_add_end + 1));
-                                    m_add_emboss_seq_list.push_back(m_emboss_seq_list[i].substr(m_add_start, m_add_start - m_add_end + 1));
-                                    m_add_emboss_sym_list.push_back(m_emboss_sym_list[i].substr(m_add_start, m_add_start - m_add_end + 1));
+                                    m_add_emboss_wt_list.push_back(m_emboss_wt_list[i].substr(m_add_start, m_addval*2 + m_grna_seq.length()));
+                                    m_add_emboss_seq_list.push_back(m_emboss_seq_list[i].substr(m_add_start, m_addval*2 + m_grna_seq.length()));
+                                    m_add_emboss_sym_list.push_back(m_emboss_sym_list[i].substr(m_add_start, m_addval*2 + m_grna_seq.length()));
                                 } else {
-                                    m_add_seq_count[m_emboss_seq_list[i].substr(m_add_start,m_add_start - m_add_end + 1)]+=this_cnt;
+                                    m_add_seq_count[m_emboss_seq_list[i].substr(m_add_start, m_addval*2 + m_grna_seq.length())]+=this_cnt;
                                 }           
                                 has_c_to_d = true;
                             }
